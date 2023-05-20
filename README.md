@@ -1,4 +1,5 @@
-# Kong API Gateway EE on a local KIND k8s cluster
+# Kong API Gateway EE w/ KIC on a local KIND k8s cluster
+This branch deploys a local kind k8s cluster and installs Kong API Gateway EE with Kong Ingress Controller(KIC).
 
 ## Requirements
 This branch assumes the following commands and tools are installed:
