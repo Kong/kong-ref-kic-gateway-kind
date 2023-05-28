@@ -69,6 +69,10 @@ admin:
     enabled: false
   ingress:
     enabled: true
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 3
 enterprise:
   enabled: true
   rbac:
