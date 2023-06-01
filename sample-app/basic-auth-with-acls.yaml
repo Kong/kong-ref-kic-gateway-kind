@@ -117,7 +117,7 @@ config:
   hide_groups_header: false
 plugin: acl
 ---
-# Create the KongPlugin for allowing the all
+# Create the KongPlugin for allowing all
 apiVersion: configuration.konghq.com/v1
 kind: KongPlugin
 metadata:
@@ -131,6 +131,7 @@ config:
   hide_groups_header: false
 plugin: acl
 ---
+# Define the service.
 apiVersion: v1
 kind: Service
 metadata:
@@ -142,6 +143,7 @@ spec:
   type: ExternalName
   externalName: httpbin.default.svc.cluster.local
 ---
+# Define the all route
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -163,6 +165,7 @@ spec:
             port:
               number: 80
 ---
+# Define the premium route
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -184,6 +187,7 @@ spec:
             port:
               number: 80
 ---
+# Define the basic route
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
