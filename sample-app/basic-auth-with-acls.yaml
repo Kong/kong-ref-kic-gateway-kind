@@ -1,0 +1,206 @@
+---
+# Make sure our manifests have a namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: basic-auth-with-acls
+---
+# Create the basic-auth plugin in Kong with configs
+apiVersion: configuration.konghq.com/v1
+kind: KongClusterPlugin
+metadata:
+  name: global-basic-auth
+  namespace: basic-auth-with-acls
+  annotations:
+    kubernetes.io/ingress.class: kong
+  labels:
+    global: "true"
+plugin: basic-auth
+config:
+  hide_credentials: true
+---
+# Create the ACL 'premium' group that manifests will reference
+apiVersion: v1
+kind: Secret
+metadata:
+  name: acl-premium
+  namespace: basic-auth-with-acls
+type: Opaque
+stringData:
+  group: premium
+  kongCredType: acl
+---
+# Create the ACL 'basic' group that manifests will reference
+apiVersion: v1
+kind: Secret
+metadata:
+  name: acl-basic
+  namespace: basic-auth-with-acls
+type: Opaque
+stringData:
+  group: basic
+  kongCredType: acl
+---
+# Create Jane's basic-auth credentials
+apiVersion: v1
+kind: Secret
+metadata:
+  name: jane-basic-auth
+  namespace: basic-auth-with-acls
+type: Opaque
+stringData:
+  username: jane
+  password: password
+  kongCredType: basic-auth
+---
+# Create Joe's basic-auth credentials
+apiVersion: v1
+kind: Secret
+metadata:
+  name: joe-basic-auth
+  namespace: basic-auth-with-acls
+type: Opaque
+stringData:
+  username: joe
+  password: password
+  kongCredType: basic-auth
+---
+# Create 'jane' consumer with basic-auth and acls
+apiVersion: configuration.konghq.com/v1
+kind: KongConsumer
+metadata:
+  name: jane
+  namespace: basic-auth-with-acls
+  annotations:
+    kubernetes.io/ingress.class: kong
+username: jane
+credentials:
+  - jane-basic-auth
+  - acl-premium
+---
+# Create 'joe' consumer with basic-auth and acls
+apiVersion: configuration.konghq.com/v1
+kind: KongConsumer
+metadata:
+  name: joe
+  namespace: basic-auth-with-acls
+  annotations:
+    kubernetes.io/ingress.class: kong
+username: joe
+credentials:
+  - joe-basic-auth
+  - acl-basic
+---
+# Create the KongPlugin for allowing premium customers
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: httpbin-premium
+  namespace: basic-auth-with-acls
+config: 
+  allow:
+  - premium
+  deny: null
+  hide_groups_header: false
+plugin: acl
+---
+# Create the KongPlugin for allowing basic customers
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: httpbin-basic
+  namespace: basic-auth-with-acls
+config: 
+  allow:
+  - basic
+  deny: null
+  hide_groups_header: false
+plugin: acl
+---
+# Create the KongPlugin for allowing the all
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: httpbin-all
+  namespace: basic-auth-with-acls
+config: 
+  allow:
+  - basic
+  - premium
+  deny: null
+  hide_groups_header: false
+plugin: acl
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: httpbin-service
+  namespace: basic-auth-with-acls
+  annotations:
+    konghq.com/path: "/anything"
+spec:
+  type: ExternalName
+  externalName: httpbin.default.svc.cluster.local
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: httpbin-all
+  namespace: basic-auth-with-acls
+  annotations: 
+    konghq.com/strip-path: "true"
+    konghq.com/plugins: "httpbin-all"
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - path: /httpbin-all
+        pathType: Prefix
+        backend:
+          service:
+            name: httpbin-service
+            port:
+              number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: httpbin-premium
+  namespace: basic-auth-with-acls
+  annotations: 
+    konghq.com/strip-path: "true"
+    konghq.com/plugins: "httpbin-premium"
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - path: /httpbin-premium
+        pathType: Prefix
+        backend:
+          service:
+            name: httpbin-service
+            port:
+              number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: httpbin-basic
+  namespace: basic-auth-with-acls
+  annotations: 
+    konghq.com/strip-path: "true"
+    konghq.com/plugins: "httpbin-basic"
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - path: /httpbin-basic
+        pathType: Prefix
+        backend:
+          service:
+            name: httpbin-service
+            port:
+              number: 80
