@@ -62,11 +62,11 @@ docker-compose up -d
 Set-Location ..
 
 Write-Host ""
-Write-Host "KONG GATEWAY API PROXY URL: " + $env:KONG_PROXY_URL
-Write-Host "KONG ADMIN API URL: " + $env:KONG_ADMIN_API_URL
-Write-Host "KONG MANAGER URL: " + $env:KONG_MANAGER_URL
-Write-Host "KONG PORTAL URL: " + $env:KONG_PORTAL_GUI_URL
-Write-Host "Keycloak URL: " + $env:KEYCLOAK_URL
-Write-Host "Prometheus URL: " + $env:PROMETHEUS_URL
-Write-Host "Grafana URL: " + $env:GRAFANA_URL
+Write-Host "KONG GATEWAY API PROXY URL: " $env:KONG_PROXY_URL
+Write-Host "KONG ADMIN API URL: " $env:KONG_ADMIN_API_URL
+Write-Host "KONG MANAGER URL: " $env:KONG_MANAGER_URL
+Write-Host "KONG PORTAL URL: " $env:KONG_PORTAL_GUI_URL
+Write-Host "Keycloak URL: " $env:KEYCLOAK_URL
+Write-Host "Prometheus URL: " $env:PROMETHEUS_URL
+Write-Host "Grafana URL: " $env:GRAFANA_URL
 Write-Host ""

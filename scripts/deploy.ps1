@@ -49,7 +49,7 @@ $portal_config = @"
 }
 "@
 Add-Content "portal_gui_session_conf" $portal_config
-kubectl create secret generic kong-session-config -n kong --from-file=portal_gui_session_conf
+kubectl create secret generic kong-portal-session-config -n kong --from-file=portal_session_conf=portal_gui_session_conf
 
 # Add Kong Helm Repo
 helm repo add kong https://charts.konghq.com
@@ -57,13 +57,15 @@ helm repo update
 
 # Deploy Kong Control Plane
 kubectl create secret generic kong-enterprise-superuser-password --from-literal=password=password -n kong
-helm install --version 2.20.2 -f .\helm-values\cp-values.yaml kong kong/kong -n kong --set env.audit_log=off --set manager.ingress.hostname=localhost --set admin.ingress.hostname=localhost --set portalapi.ingress.hostname=localhost --wait
+helm install --version 2.20.2 --wait --timeout 1000s -f .\helm-values\cp-values.yaml kong kong/kong -n kong --set env.audit_log=off --set manager.ingress.hostname=localhost --set admin.ingress.hostname=localhost --set portalapi.ingress.hostname=localhost
+kubectl rollout status deployment kong-kong -n kong
 
 # Deploy Kong Data Plane
 kubectl create namespace kong-dp
 kubectl create secret tls kong-cluster-cert --cert=./cluster.crt --key=./cluster.key -n kong-dp
 kubectl create secret generic kong-enterprise-license -n kong-dp --from-file=license=$env:KONG_LICENSE
-helm install --version 2.20.2 -f .\helm-values\dp-values.yaml kong-dp kong/kong -n kong-dp --set proxy.ingress.hostname=localhost --wait
+helm install --version 2.20.2  --wait --timeout 1000s -f .\helm-values\dp-values.yaml kong-dp kong/kong -n kong-dp --set proxy.ingress.hostname=localhost
+kubectl rollout status deployment kong-dp-kong -n kong-dp
 
 # Deploy sample app httpbin
 kubectl apply -f .\sample-app\httpbin.yaml
