@@ -66,4 +66,4 @@ kubectl create secret generic kong-enterprise-license -n kong-dp --from-file=lic
 helm install --version 2.20.2 -f .\helm-values\dp-values.yaml kong-dp kong/kong -n kong-dp --set proxy.ingress.hostname=localhost --wait
 
 # Deploy sample app httpbin
-kubectl apply -f ./sample-app/httpbin.yaml
+kubectl apply -f .\sample-app\httpbin.yaml
