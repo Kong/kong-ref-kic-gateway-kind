@@ -12,16 +12,7 @@ This branch assumes the following commands and tools are installed:
 7. python3
 8. $KONG_LICENSE needs to be set to the local path of your kong license json file
 
-## Clone Repo and Deploy
-```powershell
-cd $HOME
-git clone https://github.com/Kong/kong-ref-kic-gateway-kind.git
-cd ./kong-ref-kic-gateway-kind
-git checkout powershell
-source ./redeploy.sh
-```
+## Select your Deployment Method
+1. [BASH](https://github.com/Kong/kong-ref-kic-gateway-kind/tree/bash)
+2. [Powershell](https://github.com/Kong/kong-ref-kic-gateway-kind/tree/powershell)
 
-## Teardown
-```powershell
-./scripts/teardown.sh
-```
