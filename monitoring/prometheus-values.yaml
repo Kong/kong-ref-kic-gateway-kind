@@ -1,0 +1,35 @@
+prometheus:
+  service:
+    type: NodePort
+    nodePort: 30006
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+grafana:
+  #import Kong grafana dashboards
+  service:
+    type: NodePort
+    port: 80
+    targetPort: 3000
+    nodePort: 30005
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: 'kong'
+          orgId: 1
+          folder: 'Kong'
+          type: file
+          disableDeletion: true
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/kong
+  dashboards:
+    kong:
+      kong-official:
+        gnetId: 7424
+        revision: 7
+        datasource: Prometheus
+      kong-vitals:
+        gnetId: 11870
+        revision: 5
+        datasource: Prometheus

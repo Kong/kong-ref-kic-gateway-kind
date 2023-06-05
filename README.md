@@ -18,7 +18,7 @@ cd $HOME
 git clone https://github.com/Kong/kong-ref-kic-gateway-kind.git
 cd ./kong-ref-kic-gateway-kind
 git checkout powershell
-source ./redeploy.sh
+./redeploy.ps1
 ```
 
 ## Teardown
