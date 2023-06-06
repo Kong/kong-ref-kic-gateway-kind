@@ -23,5 +23,5 @@ git checkout powershell
 
 ## Teardown
 ```powershell
-.\scripts\teardown.sh
+.\scripts\teardown.ps1
 ```
