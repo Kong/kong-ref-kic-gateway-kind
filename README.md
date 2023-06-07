@@ -11,6 +11,7 @@ This branch assumes the following commands and tools are installed:
 6. helm
 7. python3
 8. $KONG_LICENSE needs to be set to the local path of your kong license json file
+9. (Optional) $KONG_HOSTNAME needs to be set to the dns name OR IP you'll use to access Kong.  Defaults to `localhost` if not defined.
 
 ## Clone Repo and Deploy
 ```bash
