@@ -116,7 +116,7 @@ portalapi:
   tls:
     enabled: false
   type: NodePort
-  ingress: 
+  ingress:
     enabled: true
 serviceMonitor:
   enabled: true

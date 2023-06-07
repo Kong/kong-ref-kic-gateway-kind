@@ -43,6 +43,12 @@ fi
 if [[ -z "${KONG_HOSTNAME}" ]] | [[ "${KONG_HOSTNAME}" = "localhost" ]]; then
     echo "The environment variable KONG_HOSTNAME is not defined or set to localhost."
     export KONG_HOSTNAME="localhost"
+    yq e -i '.env.admin_gui_url = "http://localhost:30002"' ./helm-values/cp-values.yaml
+    yq e -i '.env.admin_api_url = "http://localhost:30001"' ./helm-values/cp-values.yaml
+    yq e -i '.env.admin_api_uri = "localhost:30001"' ./helm-values/cp-values.yaml
+    yq e -i '.env.proxy_url = "http://localhost:30000"' ./helm-values/cp-values.yaml
+    yq e -i '.env.portal_api_url = "http://localhost:30004"' ./helm-values/cp-values.yaml
+    yq e -i '.env.portal_gui_host = "localhost:30003"' ./helm-values/cp-values.yaml
     if [ "$(uname)" == "Darwin" ]; then
         sed -i '' "/KONG_HOSTNAME/d" ./kind/kind-config.yaml
     elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
@@ -50,6 +56,12 @@ if [[ -z "${KONG_HOSTNAME}" ]] | [[ "${KONG_HOSTNAME}" = "localhost" ]]; then
     fi
 else
     echo "Using $KONG_HOSTNAME as the hostname."
+    yq e -i ".env.admin_gui_url = \"http://$KONG_HOSTNAME:30002\"" ./helm-values/cp-values.yaml
+    yq e -i ".env.admin_api_url = \"http://$KONG_HOSTNAME:30001\"" ./helm-values/cp-values.yaml
+    yq e -i ".env.admin_api_uri = \"$KONG_HOSTNAME:30001\"" ./helm-values/cp-values.yaml
+    yq e -i ".env.proxy_url = \"http://$KONG_HOSTNAME:30000\"" ./helm-values/cp-values.yaml
+    yq e -i ".env.portal_api_url = \"http://$KONG_HOSTNAME:30004\"" ./helm-values/cp-values.yaml
+    yq e -i ".env.portal_gui_host = \"$KONG_HOSTNAME:30003\"" ./helm-values/cp-values.yaml
     if [ "$(uname)" == "Darwin" ]; then
         sed -i '' "s/KONG_HOSTNAME/$KONG_HOSTNAME/g" ./kind/kind-config.yaml
     elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
